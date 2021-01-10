@@ -1,0 +1,9 @@
+#voiceactor-playback {
+    margin-right: 10px;
+}
+
+.voiceactor-button {
+    max-width: 23px;
+    background: transparent;
+    border: transparent;
+}
