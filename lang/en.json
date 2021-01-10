@@ -1,4 +1,8 @@
 {
     "VOICEACTOR": {
+        "notif": {
+            "no-clip-for-actor": "No clip recorded for this actor",
+            "clip-exists": "Clip already exists for this actor. Shift click to overwrite."
+        }
     }
 }

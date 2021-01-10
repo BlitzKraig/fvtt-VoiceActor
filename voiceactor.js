@@ -84,7 +84,7 @@ Hooks.on(`renderActorSheet`, async (app, html, data) => {
         if (exists) {
             if (!ev.shiftKey) {
                 // Notify user if record is clicked but clip exists. Bypass if SHIFT is held when clicking.
-                ui.notifications.notify("Clip already exists for this actor. Shift click to overwrite.");
+            ui.notifications.notify(game.i18n.localize("VOICEACTOR.notif.clip-exists"));
                 return;
             }
         }
@@ -164,7 +164,7 @@ Hooks.on(`renderActorSheet`, async (app, html, data) => {
             vaStates.playing = true;
             title.find("#voiceactor-playback #voiceactor-playback-icon").removeClass('fa-play').addClass('fa-stop');
         } else {
-            ui.notifications.notify("No clip recorded for this actor");
+            ui.notifications.notify(game.i18n.localize("VOICEACTOR.notif.no-clip-for-actor"));
         }
     });
 });
