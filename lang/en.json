@@ -2,7 +2,12 @@
     "VOICEACTOR": {
         "notif": {
             "no-clip-for-actor": "No clip recorded for this actor",
-            "clip-exists": "Clip already exists for this actor. Shift click to overwrite."
+            "clip-exists": "Clip already exists for this actor. Shift click to overwrite.",
+            "broadcasted": "Broadcasted clip to all players"
+        },
+        "ui": {
+            "button-tooltip-record": "Click to record. Shift-click to overwrite.",
+            "button-tooltip-playback": "Click to playback to GM. Shift-click to playback to all players."
         }
     }
 }

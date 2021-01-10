@@ -7,7 +7,7 @@ class VoiceActor {
 }
 
 Hooks.once('ready', async () => {
-    if(!game.user.isGM){
+    if (!game.user.isGM) {
         return;
     }
 
@@ -24,7 +24,7 @@ Hooks.once('ready', async () => {
 });
 
 Hooks.on(`renderActorSheet`, async (app, html, data) => {
-    if(!game.user.isGM){
+    if (!game.user.isGM) {
         return;
     }
     var customDirectory = ''
@@ -49,10 +49,10 @@ Hooks.on(`renderActorSheet`, async (app, html, data) => {
 
     // Add buttons
     title.prepend(`
-    <button id="voiceactor-record" class="voiceactor-button">
+    <button id="voiceactor-record" class="voiceactor-button" title="${game.i18n.localize("VOICEACTOR.ui.button-tooltip-record")}">
     <i id="voiceactor-record-icon" style="color: white" class="fas fa-microphone"></i>
     </button>
-    <button id="voiceactor-playback" class="voiceactor-button">
+    <button id="voiceactor-playback" class="voiceactor-button" title="${game.i18n.localize("VOICEACTOR.ui.button-tooltip-playback")}">
     <i id="voiceactor-playback-icon" style="color: white" class="fas fa-play"></i>
     </button>`);
 
@@ -90,7 +90,7 @@ Hooks.on(`renderActorSheet`, async (app, html, data) => {
         if (exists) {
             if (!ev.shiftKey) {
                 // Notify user if record is clicked but clip exists. Bypass if SHIFT is held when clicking.
-            ui.notifications.notify(game.i18n.localize("VOICEACTOR.notif.clip-exists"));
+                ui.notifications.notify(game.i18n.localize("VOICEACTOR.notif.clip-exists"));
                 return;
             }
         }
@@ -154,21 +154,30 @@ Hooks.on(`renderActorSheet`, async (app, html, data) => {
             // Used for onend and onstop
             var onFinish = (id) => {
                 // Prevent caching, in case the user overwrites the clip
-                vaPlaybackFile.unload();
-                vaPlaybackFile = undefined;
+                if (vaPlaybackFile) {
+                    vaPlaybackFile.unload();
+                    vaPlaybackFile = undefined;
+                }
                 vaStates.playing = false;
                 title.find("#voiceactor-playback #voiceactor-playback-icon").removeClass('fa-stop').addClass('fa-play');
             }
             // Play file
-            vaPlaybackFile = new Howl({
+            let payload = {
                 src: `${customDirectory}/VoiceActor/${fileName}`,
                 volume: game.settings.get("core", "globalAmbientVolume"),
                 onend: onFinish,
                 onstop: onFinish
-            });
+            }
+            vaPlaybackFile = new Howl(payload);
             vaPlaybackFile.play();
             vaStates.playing = true;
             title.find("#voiceactor-playback #voiceactor-playback-icon").removeClass('fa-play').addClass('fa-stop');
+            if (ev.shiftKey) {
+                game.socket.emit("playAudio", payload)
+                ui.notifications.notify(game.i18n.localize("VOICEACTOR.notif.broadcasted"));
+            }
+
+
         } else {
             ui.notifications.notify(game.i18n.localize("VOICEACTOR.notif.no-clip-for-actor"));
         }

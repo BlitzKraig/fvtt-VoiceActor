@@ -1,3 +1,7 @@
+# 0.0.4 - 2020/01/10
+
+* Added broadcast audio via shift-click
+
 # 0.0.3 - 2020/01/10
 
 * Disallowed non-gm interaction

@@ -43,6 +43,8 @@ Click again to stop recording
 
 Click play to playback the recorded audio (does not broadcast, only plays for the GM)
 
+Shift-click play to broadcast to all players (note that this isn't what the module is designed for, but it was easy enough to implement, so I've jammed it in there in case you want to give your NPCs a repeatable greeting, or give your ogres a nice roar)
+
 Shift-click the microphone button to record a new clip, overwriting the previous clip for that actor
 
 ## What else should I know?
