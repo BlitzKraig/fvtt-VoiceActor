@@ -12,7 +12,7 @@ I wrote it in a couple of hours, hoping it would help me dip my feet back into F
 It's pretty simple, a little hacky, and contains some less than stellar coding practices... BUT, it's also pretty useful!
 
 In a nutshell, I find myself constantly asking my players "What did I make this guy sound like again?..." whenever we revisit an NPC.
-This module should help with that problem, allowing the GM to record a sample of an NPC's voice directly in their sheet.
+This module should help with that problem, allowing the GM to record a sample of an NPC's voice directly in their sheet, and play it back privately whenever they want.
 
 ## What does it do?
 
@@ -28,6 +28,28 @@ Unlinked actors will have a clip saved based on their ID and actor name.
 This means unlinked actors with the same name will share the same clip, but changing an actors name in their unlinked sheet after spawning will allow you to record a clip for that actor specifically (and any other actors of that 'type' with the same name)
 
 e.g. If you change one unlinked Goblin's name to "Boblin" in his actor sheet, he can have his own special clip recorded. All of the goblins named "Goblin" will share a single clip.
+
+## How do I use it?
+
+Install & enable the module
+
+Double click a token to open their actor sheet
+
+Note the 2 new buttons at the top left of the window
+
+Click the microphone button to record (up to 10 seconds)
+
+Click again to stop recording
+
+Click play to playback the recorded audio (does not broadcast, only plays for the GM)
+
+Shift-click the microphone button to record a new clip, overwriting the previous clip for that actor
+
+## What else should I know?
+
+Linked actor tokens will save their clip using the actor ID. This means your BBEG NPC can have a clip recorded, and will play back that same clip on every spawned token.
+
+Unlinked actor tokens will save their clip using the actor ID AND the actor name. This means, for example, all of your "Commoner"s will share a clip, except tokens you spawn and then change the name of. Maybe there's a memorable NPC that uses the Commoner statblock - no problem! Spawn a Commoner, double click the token, change the token name to your NPC's name, then record your clip!
 
 ## Manifest
 

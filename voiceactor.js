@@ -7,10 +7,13 @@ class VoiceActor {
 }
 
 Hooks.once('ready', async () => {
-    // Ensure the VA dir exists
+    if(!game.user.isGM){
+        return;
+    }
 
     // Will be used when custom dirs are supported
     var customDirectory = ''
+    // Ensure the VA dir exists
     try {
         await FilePicker.createDirectory("data", `${customDirectory}/VoiceActor`)
     } catch (e) {
@@ -21,6 +24,9 @@ Hooks.once('ready', async () => {
 });
 
 Hooks.on(`renderActorSheet`, async (app, html, data) => {
+    if(!game.user.isGM){
+        return;
+    }
     var customDirectory = ''
 
     // Get window-title from html so we can prepend our buttons
