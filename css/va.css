@@ -3,7 +3,7 @@
 }
 
 .voiceactor-button {
-    max-width: 23px;
-    background: transparent;
-    border: transparent;
+    max-width: 23px !important;
+    background: transparent !important;
+    border: transparent !important;
 }
