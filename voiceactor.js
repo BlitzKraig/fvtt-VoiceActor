@@ -180,6 +180,7 @@ Hooks.on(`renderActorSheet`, async (app, html, data) => {
             // Play file
             let payload = {
                 src: clip,
+                volume: game.settings.get("core", "globalInterfaceVolume"),
                 onend: onFinish,
                 onstop: onFinish
             }
