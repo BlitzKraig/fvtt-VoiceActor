@@ -4,9 +4,36 @@
 
 class VoiceActor {
     static moduleName = "VoiceActor";
+
+    static getClip = async (actorData, customDirectory) => {
+        // Get files
+        var vaDir = await FilePicker.browse(VoiceActor.isForge()?'forgevtt':'data', `${customDirectory}/VoiceActor`)
+        // Check if file exists already
+        var fileName;
+        if (actorData.token.actorLink) {
+            fileName = `${actorData._id}.ogg`;
+        } else {
+            fileName = `${actorData._id}-${actorData.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.ogg`
+        }
+        return VoiceActor.getFile(vaDir.files, fileName);
+    }
+
+    static getFile = (filesArray, filename) => {
+        let file = filesArray.find(el => el.includes(filename))
+        return file || false;
+    }
+
+    static isForge = ()=>{
+        if (typeof ForgeVTT !== 'undefined') {
+            return ForgeVTT.usingTheForge;
+        } else {
+            return false;
+        }
+    }
 }
 
 Hooks.once('ready', async () => {
+
     if (!game.user.isGM) {
         return;
     }
@@ -15,7 +42,7 @@ Hooks.once('ready', async () => {
     var customDirectory = ''
     // Ensure the VA dir exists
     try {
-        await FilePicker.createDirectory("data", `${customDirectory}/VoiceActor`)
+        await FilePicker.createDirectory(VoiceActor.isForge()?'forgevtt':'data', `${customDirectory}/VoiceActor`)
     } catch (e) {
         if (!e.startsWith('EEXIST')) {
             console.log(e);
@@ -56,16 +83,9 @@ Hooks.on(`renderActorSheet`, async (app, html, data) => {
     <i id="voiceactor-playback-icon" style="color: white" class="fas fa-play"></i>
     </button>`);
 
-    // Check if file exists already
-    var fileName;
-    if (data.actor.token.actorLink) {
-        fileName = `${data.actor._id}.ogg`;
-    } else {
-        fileName = `${data.actor._id}-${data.actor.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.ogg`
-    }
-    const exists = await srcExists(`${customDirectory}/VoiceActor/${fileName}`);
+    let clip = await VoiceActor.getClip(data.actor, customDirectory);
 
-    if (exists) {
+    if (clip) {
         // Change button color if this actor has a clip already
         title.find("#voiceactor-record #voiceactor-record-icon").css('color', 'lightgreen');
     }
@@ -78,21 +98,25 @@ Hooks.on(`renderActorSheet`, async (app, html, data) => {
             return;
         }
 
-        // Check if file exists
+        let clip = await VoiceActor.getClip(data.actor, customDirectory);
+
+        if (clip) {
+            if (!ev.shiftKey) {
+                // Notify user if record is clicked but clip exists. Bypass if SHIFT is held when clicking.
+                ui.notifications.notify(game.i18n.localize("VOICEACTOR.notif.clip-exists"));
+                return;
+            } else {
+                if(VoiceActor.isForge()){
+                    ui.notifications.notify(game.i18n.localize("VOICEACTOR.notif.forge-cache"))
+                }
+            }
+        }
+
         var fileName;
         if (data.actor.token.actorLink) {
             fileName = `${data.actor._id}.ogg`;
         } else {
             fileName = `${data.actor._id}-${data.actor.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.ogg`
-        }
-        const exists = await srcExists(`${customDirectory}/VoiceActor/${fileName}`);
-
-        if (exists) {
-            if (!ev.shiftKey) {
-                // Notify user if record is clicked but clip exists. Bypass if SHIFT is held when clicking.
-                ui.notifications.notify(game.i18n.localize("VOICEACTOR.notif.clip-exists"));
-                return;
-            }
         }
 
         // Record clip
@@ -113,7 +137,7 @@ Hooks.on(`renderActorSheet`, async (app, html, data) => {
                     const file = new File([blob], fileName, {
                         type: 'audio/ogg'
                     })
-                    await FilePicker.upload("data", `${customDirectory}/VoiceActor`, file);
+                    await FilePicker.upload(VoiceActor.isForge()?'forgevtt':'data', `${customDirectory}/VoiceActor`, file);
                     vaStates.recording = false;
 
                     title.find("#voiceactor-record #voiceactor-record-icon").removeClass('fa-stop').addClass('fa-microphone');
@@ -140,17 +164,9 @@ Hooks.on(`renderActorSheet`, async (app, html, data) => {
             return;
         }
 
-        // Check if clip exists
-        var fileName;
-        if (data.actor.token.actorLink) {
-            fileName = `${data.actor._id}.ogg`;
-        } else {
-            fileName = `${data.actor._id}-${data.actor.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.ogg`
-        }
-        const exists = await srcExists(`${customDirectory}/VoiceActor/${fileName}`);
+        let clip = await VoiceActor.getClip(data.actor, customDirectory);
 
-        if (exists) {
-
+        if (clip) {
             // Used for onend and onstop
             var onFinish = (id) => {
                 // Prevent caching, in case the user overwrites the clip
@@ -163,8 +179,7 @@ Hooks.on(`renderActorSheet`, async (app, html, data) => {
             }
             // Play file
             let payload = {
-                src: `${customDirectory}/VoiceActor/${fileName}`,
-                volume: game.settings.get("core", "globalAmbientVolume"),
+                src: clip,
                 onend: onFinish,
                 onstop: onFinish
             }
