@@ -2,7 +2,7 @@
   "name": "VoiceActor",
   "title": "VoiceActor by Blitz",
   "description": "'Wait, what did they sound like again?'. Save a voice clip to an actor to playback, and remind yourself what dumb voice you used.",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "author": "Blitzkraig",
   "scripts": ["./voiceactor.js"],
   "styles": ["./css/va.css"],
