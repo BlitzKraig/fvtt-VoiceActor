@@ -152,7 +152,7 @@ Hooks.on(`renderActorSheet`, async (app, html, data) => {
             // Stop recording after 10 seconds. Timeout is cancelled if user stops manually
             vaRecorderTimeout = setTimeout(() => {
                 vaRecorder.stop();
-            }, 10000);
+            }, 30000);
         }).catch(console.error);
     });
 
