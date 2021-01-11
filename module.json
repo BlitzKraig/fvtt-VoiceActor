@@ -14,7 +14,7 @@
       "path": "lang/en.json"
     }
   ],
-  "minimumCoreVersion": "0.7.9",
+  "minimumCoreVersion": "0.7.0",
   "compatibleCoreVersion": "0.7.9",
   "url": "https://github.com/BlitzKraig/fvtt-VoiceActor",
   "manifest": "https://raw.githubusercontent.com/BlitzKraig/fvtt-VoiceActor/master/module.json",
