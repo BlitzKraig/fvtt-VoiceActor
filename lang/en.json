@@ -9,6 +9,16 @@
         "ui": {
             "button-tooltip-record": "Click to record. Shift-click to overwrite.",
             "button-tooltip-playback": "Click to playback to GM. Shift-click to playback to all players."
+        },
+        "settings": {
+            "players-record-owned": {
+                "name":"Allow Owner recording",
+                "hint":"Enable to let players record and playback on their owned actors. Requires FILES_UPLOAD permission for players."
+            },
+            "players-playback-limited":{
+                "name":"Allow Limited & Observer playback",
+                "hint":"Enable to let players playback clips on actors they have Limited or Observer permissions on. Players cannot record to these actors."
+            }
         }
     }
 }

@@ -1,3 +1,8 @@
+# 0.0.7 - 2020/01/13
+
+* Added option to allow players to record to their owned actors
+* Added option to allow players to playback from limited/observer actors
+
 # 0.0.6 - 2020/01/11
 
 * Added forge support

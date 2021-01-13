@@ -7,7 +7,7 @@ class VoiceActor {
 
     static getClip = async (actorData, customDirectory) => {
         // Get files
-        var vaDir = await FilePicker.browse(VoiceActor.isForge()?'forgevtt':'data', `${customDirectory}/VoiceActor`)
+        var vaDir = await FilePicker.browse(VoiceActor.isForge() ? 'forgevtt' : 'data', `${customDirectory}/VoiceActor`)
         // Check if file exists already
         var fileName;
         if (actorData.token.actorLink) {
@@ -23,7 +23,7 @@ class VoiceActor {
         return file || false;
     }
 
-    static isForge = ()=>{
+    static isForge = () => {
         if (typeof ForgeVTT !== 'undefined') {
             return ForgeVTT.usingTheForge;
         } else {
@@ -34,26 +34,40 @@ class VoiceActor {
 
 Hooks.once('ready', async () => {
 
-    if (!game.user.isGM) {
-        return;
-    }
+    game.settings.register("VoiceActor", "playersRecordOwned", {
+        name: "VOICEACTOR.settings.players-record-owned.name",
+        hint: "VOICEACTOR.settings.players-record-owned.hint",
+        scope: "world",
+        config: true,
+        default: false,
+        type: Boolean
+    });
 
-    // Will be used when custom dirs are supported
-    var customDirectory = ''
-    // Ensure the VA dir exists
-    try {
-        await FilePicker.createDirectory(VoiceActor.isForge()?'forgevtt':'data', `${customDirectory}/VoiceActor`)
-    } catch (e) {
-        if (!e.startsWith('EEXIST')) {
-            console.log(e);
+    game.settings.register("VoiceActor", "playersPlaybackLimited", {
+        name: "VOICEACTOR.settings.players-playback-limited.name",
+        hint: "VOICEACTOR.settings.players-playback-limited.hint",
+        scope: "world",
+        config: true,
+        default: false,
+        type: Boolean
+    });
+
+    if (game.user.isGM) {
+        // Will be used when custom dirs are supported
+        var customDirectory = ''
+        // Ensure the VA dir exists
+        try {
+            await FilePicker.createDirectory(VoiceActor.isForge() ? 'forgevtt' : 'data', `${customDirectory}/VoiceActor`)
+        } catch (e) {
+            if (!e.startsWith('EEXIST')) {
+                console.log(e);
+            }
         }
     }
 });
 
 Hooks.on(`renderActorSheet`, async (app, html, data) => {
-    if (!game.user.isGM) {
-        return;
-    }
+
     var customDirectory = ''
 
     // Get window-title from html so we can prepend our buttons
@@ -74,14 +88,22 @@ Hooks.on(`renderActorSheet`, async (app, html, data) => {
     // timeout to sop vaRecorder after 10 seconds if not stopped manually
     var vaRecorderTimeout;
 
+    let buttons = ``;
+    game.settings.get("VoiceActor", "playersRecordOwned");
+    if (game.user.isGM || (data.owner && game.settings.get("VoiceActor", "playersRecordOwned") && game.user.hasPermission("FILES_UPLOAD"))) {
+        buttons += `<button id="voiceactor-record" class="voiceactor-button" title="${game.i18n.localize("VOICEACTOR.ui.button-tooltip-record")}">
+        <i id="voiceactor-record-icon" style="color: white" class="fas fa-microphone"></i>
+        </button>`;
+    }
+
+    if (game.user.isGM || data.owner || game.settings.get("VoiceActor", "playersPlaybackLimited")) {
+        buttons += `<button id="voiceactor-playback" class="voiceactor-button" title="${game.i18n.localize("VOICEACTOR.ui.button-tooltip-playback")}">
+        <i id="voiceactor-playback-icon" style="color: white" class="fas fa-play"></i>
+        </button>`
+    }
+
     // Add buttons
-    title.prepend(`
-    <button id="voiceactor-record" class="voiceactor-button" title="${game.i18n.localize("VOICEACTOR.ui.button-tooltip-record")}">
-    <i id="voiceactor-record-icon" style="color: white" class="fas fa-microphone"></i>
-    </button>
-    <button id="voiceactor-playback" class="voiceactor-button" title="${game.i18n.localize("VOICEACTOR.ui.button-tooltip-playback")}">
-    <i id="voiceactor-playback-icon" style="color: white" class="fas fa-play"></i>
-    </button>`);
+    title.prepend(buttons);
 
     let clip = await VoiceActor.getClip(data.actor, customDirectory);
 
@@ -106,7 +128,7 @@ Hooks.on(`renderActorSheet`, async (app, html, data) => {
                 ui.notifications.notify(game.i18n.localize("VOICEACTOR.notif.clip-exists"));
                 return;
             } else {
-                if(VoiceActor.isForge()){
+                if (VoiceActor.isForge()) {
                     ui.notifications.notify(game.i18n.localize("VOICEACTOR.notif.forge-cache"))
                 }
             }
@@ -137,7 +159,7 @@ Hooks.on(`renderActorSheet`, async (app, html, data) => {
                     const file = new File([blob], fileName, {
                         type: 'audio/ogg'
                     })
-                    await FilePicker.upload(VoiceActor.isForge()?'forgevtt':'data', `${customDirectory}/VoiceActor`, file);
+                    await FilePicker.upload(VoiceActor.isForge() ? 'forgevtt' : 'data', `${customDirectory}/VoiceActor`, file);
                     vaStates.recording = false;
 
                     title.find("#voiceactor-record #voiceactor-record-icon").removeClass('fa-stop').addClass('fa-microphone');
