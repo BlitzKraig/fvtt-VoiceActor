@@ -5,16 +5,21 @@
 class VoiceActor {
     static moduleName = "VoiceActor";
 
-    static getClip = async (actorData, customDirectory) => {
+    static getClip = async (data, customDirectory, isJournal) => {
         // Get files
-        var vaDir = await FilePicker.browse(VoiceActor.isForge() ? 'forgevtt' : 'data', `${customDirectory}/VoiceActor`)
+        var vaDir = await FilePicker.browse(VoiceActor.isForge() ? 'forgevtt' : 'data', `${customDirectory}/VoiceActor${isJournal?'/Journal':''}`)
         // Check if file exists already
         var fileName;
-        if (actorData.token.actorLink) {
-            fileName = `${actorData._id}.ogg`;
+        if (isJournal) {
+            fileName = `${data.entity._id}.ogg`;
         } else {
-            fileName = `${actorData._id}-${actorData.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.ogg`
+            if (data.actor.token.actorLink) {
+                fileName = `${data.actor._id}.ogg`;
+            } else {
+                fileName = `${data.actor._id}-${data.actor.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.ogg`
+            }
         }
+
         return VoiceActor.getFile(vaDir.files, fileName);
     }
 
@@ -63,10 +68,17 @@ Hooks.once('ready', async () => {
                 console.log(e);
             }
         }
+        try {
+            await FilePicker.createDirectory(VoiceActor.isForge() ? 'forgevtt' : 'data', `${customDirectory}/VoiceActor/Journal`)
+        } catch (e) {
+            if (!e.startsWith('EEXIST')) {
+                console.log(e);
+            }
+        }
     }
 });
 
-Hooks.on(`renderActorSheet`, async (app, html, data) => {
+var onRender = async (app, html, data) => {
 
     var customDirectory = ''
 
@@ -88,6 +100,11 @@ Hooks.on(`renderActorSheet`, async (app, html, data) => {
     // timeout to sop vaRecorder after 10 seconds if not stopped manually
     var vaRecorderTimeout;
 
+    var isJournal = false;
+    if (data.options.classes.indexOf("journal-sheet") > -1) {
+        isJournal = true;
+    }
+
     let buttons = ``;
     game.settings.get("VoiceActor", "playersRecordOwned");
     if (game.user.isGM || (data.owner && game.settings.get("VoiceActor", "playersRecordOwned") && game.user.hasPermission("FILES_UPLOAD"))) {
@@ -105,7 +122,7 @@ Hooks.on(`renderActorSheet`, async (app, html, data) => {
     // Add buttons
     title.prepend(buttons);
 
-    let clip = await VoiceActor.getClip(data.actor, customDirectory);
+    let clip = await VoiceActor.getClip(data, customDirectory, isJournal);
 
     if (clip) {
         // Change button color if this actor has a clip already
@@ -120,7 +137,7 @@ Hooks.on(`renderActorSheet`, async (app, html, data) => {
             return;
         }
 
-        let clip = await VoiceActor.getClip(data.actor, customDirectory);
+        let clip = await VoiceActor.getClip(data, customDirectory, isJournal);
 
         if (clip) {
             if (!ev.shiftKey) {
@@ -135,10 +152,15 @@ Hooks.on(`renderActorSheet`, async (app, html, data) => {
         }
 
         var fileName;
-        if (data.actor.token.actorLink) {
-            fileName = `${data.actor._id}.ogg`;
+
+        if (isJournal) {
+            fileName = `${data.entity._id}.ogg`;
         } else {
-            fileName = `${data.actor._id}-${data.actor.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.ogg`
+            if (data.actor.token.actorLink) {
+                fileName = `${data.actor._id}.ogg`;
+            } else {
+                fileName = `${data.actor._id}-${data.actor.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.ogg`
+            }
         }
 
         // Record clip
@@ -159,7 +181,7 @@ Hooks.on(`renderActorSheet`, async (app, html, data) => {
                     const file = new File([blob], fileName, {
                         type: 'audio/ogg'
                     })
-                    await FilePicker.upload(VoiceActor.isForge() ? 'forgevtt' : 'data', `${customDirectory}/VoiceActor`, file);
+                    await FilePicker.upload(VoiceActor.isForge() ? 'forgevtt' : 'data', `${customDirectory}/VoiceActor${isJournal?'/Journal':''}`, file);
                     vaStates.recording = false;
 
                     title.find("#voiceactor-record #voiceactor-record-icon").removeClass('fa-stop').addClass('fa-microphone');
@@ -171,7 +193,7 @@ Hooks.on(`renderActorSheet`, async (app, html, data) => {
                 }
             };
             vaRecorder.start();
-            // Stop recording after 10 seconds. Timeout is cancelled if user stops manually
+            // Stop recording after 30 seconds. Timeout is cancelled if user stops manually
             vaRecorderTimeout = setTimeout(() => {
                 vaRecorder.stop();
             }, 30000);
@@ -186,7 +208,7 @@ Hooks.on(`renderActorSheet`, async (app, html, data) => {
             return;
         }
 
-        let clip = await VoiceActor.getClip(data.actor, customDirectory);
+        let clip = await VoiceActor.getClip(data, customDirectory, isJournal);
 
         if (clip) {
             // Used for onend and onstop
@@ -220,4 +242,8 @@ Hooks.on(`renderActorSheet`, async (app, html, data) => {
             ui.notifications.notify(game.i18n.localize("VOICEACTOR.notif.no-clip-for-actor"));
         }
     });
-});
+};
+
+Hooks.on(`renderActorSheet`, onRender);
+
+Hooks.on(`renderJournalSheet`, onRender);

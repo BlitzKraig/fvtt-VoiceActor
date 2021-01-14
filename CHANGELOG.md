@@ -1,3 +1,7 @@
+# 0.0.8 - 2020/01/14
+
+* Added support to record/playback in journal entries
+
 # 0.0.7 - 2020/01/13
 
 * Added option to allow players to record to their owned actors
