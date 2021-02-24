@@ -4,7 +4,8 @@
             "no-clip-for-actor": "No clip recorded for this actor",
             "clip-exists": "Clip already exists for this actor. Shift click to overwrite.",
             "broadcasted": "Broadcasted clip to all players",
-            "forge-cache": "Overwritten clips can take up to 3 minutes to update in Forge. If you cannot hear your new recording, please try playing back again later."
+            "forge-cache": "Overwritten clips can take up to 3 minutes to update in Forge. If you cannot hear your new recording, please try playing back again later.",
+            "no-media-devices": "Microphone permissions error. Please check the readme on GitHub for a solution."
         },
         "ui": {
             "button-tooltip-record": "Click to record. Shift-click to overwrite.",

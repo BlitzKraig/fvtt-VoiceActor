@@ -5,6 +5,43 @@
 
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Q5Q01YIEJ)
 
+# Important note for servers accessed over HTTP/IP
+
+Chrome and Firefox will not ask you to grant microphone permissions if you do not have an SSL enabled site, they will just refuse automatically, breaking the module.
+
+If you only want the GM to record via the module, use `localhost` to access Foundry if possible.
+
+If this is not possible due to external hosting etc., I have discovered a workaround for Chrome, and a slightly worse workaround for Firefox.
+
+## *PROCEED AT YOUR OWN RISK*
+
+These workarounds should be safe, but I am not a security expert.
+I would advise running via localhost, or setting up SSL for your server.
+
+## Chrome (Secure-ish workaround)
+
+* Navigate to `chrome://flags/#unsafely-treat-insecure-origin-as-secure`
+* Enable the flag and add your foundry IP and port: `http://ip.address.here:30000`
+* Relaunch, and Chrome will now ask for mic permissions when you try to record to an actor
+
+## Firefox (Less secure workaround)
+
+* Navigate to `about:config`
+* Search for `insecure`
+* Set `media.devices.insecure.enabled` to `true`
+* Set `media.getusermedia.insecure.enabled` to `true`
+* Refresh foundry page, Firefox will now ask for mic permission when you try to record to an actor
+
+## The difference
+
+Chrome lets you whitelist the server directly, meaning the security holes this potentially exposes can't be taken advantage of by other insecure sites.
+Firefox only lets you blanket allow insecure `getusermedia` and `devices`, meaning an insecure site could theoretically try to take advantage of this.
+
+Because they are both permissions-based, you need to actually allow the site to use them, so the risk is pretty low. HOWEVER, **you do this at your own risk!**
+I would advise looking into setting up an HTTPS foundry server.
+
+# Now that's out of the way, on to the module!
+
 ## What's it for?
 
 This module is my very late and unofficial D20 day contribution!

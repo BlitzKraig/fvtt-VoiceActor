@@ -1,13 +1,17 @@
-# 0.0.8 - 2020/01/14
+# 0.0.9 -2021/02/24
+
+* Added check for insecure sites. Updated readme with workarounds.
+
+# 0.0.8 - 2021/01/14
 
 * Added support to record/playback in journal entries
 
-# 0.0.7 - 2020/01/13
+# 0.0.7 - 2021/01/13
 
 * Added option to allow players to record to their owned actors
 * Added option to allow players to playback from limited/observer actors
 
-# 0.0.6 - 2020/01/11
+# 0.0.6 - 2021/01/11
 
 * Added forge support
 * Updated max clip time to 30 seconds
@@ -15,11 +19,11 @@
 * Reduced minimum core version
 * Switched to Interface/SoundBoard volume slider from Ambient
 
-# 0.0.4 - 2020/01/10
+# 0.0.4 - 2021/01/10
 
 * Added broadcast audio via shift-click
 
-# 0.0.3 - 2020/01/10
+# 0.0.3 - 2021/01/10
 
 * Disallowed non-gm interaction
 * Added more readme details

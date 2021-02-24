@@ -163,6 +163,9 @@ var onRender = async (app, html, data) => {
             }
         }
 
+        if(!navigator.mediaDevices){
+            ui.notifications.error(game.i18n.localize("VOICEACTOR.notif.no-media-devices"));
+        }
         // Record clip
         navigator.mediaDevices.getUserMedia({
             audio: true
@@ -197,7 +200,9 @@ var onRender = async (app, html, data) => {
             vaRecorderTimeout = setTimeout(() => {
                 vaRecorder.stop();
             }, 30000);
-        }).catch(console.error);
+        }).catch((e)=>{
+            console.log(e);
+        });
     });
 
     title.find("#voiceactor-playback").click(async (ev) => {
