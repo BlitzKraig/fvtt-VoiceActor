@@ -215,12 +215,15 @@ var onRender = async (app, html, data) => {
 
         let clip = await VoiceActor.getClip(data, customDirectory, isJournal);
 
+        let hasHowler = typeof Howl != 'undefined'
         if (clip) {
             // Used for onend and onstop
             var onFinish = (id) => {
                 // Prevent caching, in case the user overwrites the clip
                 if (vaPlaybackFile) {
-                    vaPlaybackFile.unload();
+                    if(hasHowler){
+                        vaPlaybackFile.unload();
+                    }
                     vaPlaybackFile = undefined;
                 }
                 vaStates.playing = false;
@@ -233,8 +236,16 @@ var onRender = async (app, html, data) => {
                 onend: onFinish,
                 onstop: onFinish
             }
-            vaPlaybackFile = new Howl(payload);
-            vaPlaybackFile.play();
+            if(hasHowler){
+                vaPlaybackFile = new Howl(payload);
+                vaPlaybackFile.play();
+            } else {
+                vaPlaybackFile = new Sound(payload.src);
+                vaPlaybackFile.on('end', onFinish);
+                vaPlaybackFile.on('stop', onFinish)
+                await vaPlaybackFile.load();
+                vaPlaybackFile.play({volume: payload.volume});
+            }
             vaStates.playing = true;
             title.find("#voiceactor-playback #voiceactor-playback-icon").removeClass('fa-play').addClass('fa-stop');
             if (ev.shiftKey) {

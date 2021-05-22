@@ -1,4 +1,8 @@
-# 0.0.9 -2021/02/24
+# 0.1.0 - 2021/05/22
+
+* Fixed playback on 0.8+
+
+# 0.0.9 - 2021/02/24
 
 * Added check for insecure sites. Updated readme with workarounds.
 
