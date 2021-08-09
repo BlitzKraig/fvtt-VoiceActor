@@ -1,3 +1,7 @@
+# 0.1.2 - 2021/08/09
+
+* Fixed broken audio files, republished
+
 # 0.1.0 - 2021/05/22
 
 * Fixed playback on 0.8+
