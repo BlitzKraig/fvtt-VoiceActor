@@ -11,12 +11,12 @@ class VoiceActor {
         // Check if file exists already
         var fileName;
         if (isJournal) {
-            fileName = `${data.entity._id}.ogg`;
+            fileName = `${data.entity._id}.wav`;
         } else {
             if (data.actor.token.actorLink) {
-                fileName = `${data.actor._id}.ogg`;
+                fileName = `${data.actor._id}.wav`;
             } else {
-                fileName = `${data.actor._id}-${data.actor.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.ogg`
+                fileName = `${data.actor._id}-${data.actor.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.wav`
             }
         }
 
@@ -154,12 +154,12 @@ var onRender = async (app, html, data) => {
         var fileName;
 
         if (isJournal) {
-            fileName = `${data.entity._id}.ogg`;
+            fileName = `${data.entity._id}.wav`;
         } else {
             if (data.actor.token.actorLink) {
-                fileName = `${data.actor._id}.ogg`;
+                fileName = `${data.actor._id}.wav`;
             } else {
-                fileName = `${data.actor._id}-${data.actor.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.ogg`
+                fileName = `${data.actor._id}-${data.actor.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.wav`
             }
         }
 
@@ -179,13 +179,19 @@ var onRender = async (app, html, data) => {
                 chunks.push(e.data);
                 if (vaRecorder.state == 'inactive') {
                     const blob = new Blob(chunks, {
-                        type: 'audio/ogg'
+                        type: 'audio/wav'
                     });
                     const file = new File([blob], fileName, {
-                        type: 'audio/ogg'
+                        type: 'audio/wav'
                     })
-                    await FilePicker.upload(VoiceActor.isForge() ? 'forgevtt' : 'data', `${customDirectory}/VoiceActor${isJournal?'/Journal':''}`, file);
+
+                    let dirName = `${customDirectory}/VoiceActor${isJournal?'/Journal':''}`
+
+                    await FilePicker.upload(VoiceActor.isForge() ? 'forgevtt' : 'data', dirName, file);
                     vaStates.recording = false;
+
+                    // Only really works with Firefox, chrome has some weird caching, requiring the user to wait about 30 seconds
+                    game.audio.buffers.delete(`${dirName[0]=='/'?dirName.substr(1):dirName}/${fileName}`);
 
                     title.find("#voiceactor-record #voiceactor-record-icon").removeClass('fa-stop').addClass('fa-microphone');
                     title.find("#voiceactor-record #voiceactor-record-icon").css('color', 'lightgreen');
