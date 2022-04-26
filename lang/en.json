@@ -19,6 +19,10 @@
             "players-playback-limited":{
                 "name":"Allow Limited & Observer playback",
                 "hint":"Enable to let players playback clips on actors they have Limited or Observer permissions on. Players cannot record to these actors."
+            },
+            "dark-buttons":{
+                "name":"Use dark buttons",
+                "hint":"Enable to darken the buttons. Useful for some sheets where the play button is hard to see."
             }
         }
     }
