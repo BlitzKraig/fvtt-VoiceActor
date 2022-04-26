@@ -11,20 +11,27 @@ class VoiceActor {
         // Check if file exists already
         var fileName;
         if (isJournal) {
-            fileName = `${data.entity._id}.wav`;
+            fileName = `${data.document.id}`;
         } else {
-            if (data.actor.token.actorLink) {
-                fileName = `${data.actor._id}.wav`;
+            if (data?.actor?.token?.actorLink || data?.token?.actorLink) {
+                fileName = `${data?.actor?._id || data?._id}`;
             } else {
-                fileName = `${data.actor._id}-${data.actor.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.wav`
+                fileName = `${data?.actor?._id || data?._id}-${data?.actor?.name?.replace(/[^a-z0-9]/gi, '_').toLowerCase() || data?.name?.replace(/[^a-z0-9]/gi, '_').toLowerCase()}`
             }
         }
 
         return VoiceActor.getFile(vaDir.files, fileName);
     }
 
-    static getFile = (filesArray, filename) => {
-        let file = filesArray.find(el => el.includes(filename))
+    static getFile = (filesArray, fileName) => {
+        let file = filesArray.filter(el => el.includes(fileName))
+            .filter(el => el.includes('.wav'))
+            .sort((a, b) => {
+                if(!a.includes('~')){
+                    return -1
+                }
+                a.split('~').pop().split('.')[0] - b.split('~').pop().split('.')[0] // Nasty sort, don't have the time to dig into this any further
+            }).pop()
         return file || false;
     }
 
@@ -110,7 +117,7 @@ var onRender = async (app, html, data) => {
     var vaRecorderTimeout;
 
     var isJournal = false;
-    if (data.options.classes.indexOf("journal-sheet") > -1) {
+    if (data?.options?.classes?.indexOf("journal-sheet") > -1) {
         isJournal = true;
     }
 
@@ -160,19 +167,30 @@ var onRender = async (app, html, data) => {
             }
         }
 
-        var fileName;
+        var fileName = clip;
 
-        if (isJournal) {
-            fileName = `${data.entity._id}.wav`;
-        } else {
-            if (data.actor.token.actorLink) {
-                fileName = `${data.actor._id}.wav`;
+        if (!fileName) {
+            if (isJournal) {
+                fileName = `${data.document.id}-0.wav`;
             } else {
-                fileName = `${data.actor._id}-${data.actor.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.wav`
+                if (data?.actor?.token?.actorLink || data?.token?.actorLink) {
+                    fileName = `${data?.actor?._id || data?._id}~0.wav`;
+                } else {
+                    fileName = `${data?.actor?._id || data?._id}-${data?.actor?.name?.replace(/[^a-z0-9]/gi, '_').toLowerCase() || data?.name?.replace(/[^a-z0-9]/gi, '_').toLowerCase()}~0.wav`
+                }
+            }
+        } else {
+            let suffix = fileName.split('~').pop().split('.')
+            suffix[0]++
+            if(isNaN(suffix[0])){
+                suffix[0] = 0
+                fileName = fileName.split('.').slice(0,-1).join('.') + '~' + suffix.join('.')
+            } else {
+                fileName = fileName.split('~').slice(0,-1).join('~') + '~' + suffix.join('.')
             }
         }
 
-        if(!navigator.mediaDevices){
+        if (!navigator.mediaDevices) {
             ui.notifications.error(game.i18n.localize("VOICEACTOR.notif.no-media-devices"));
         }
         // Record clip
