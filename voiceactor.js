@@ -57,6 +57,15 @@ Hooks.once('ready', async () => {
         type: Boolean
     });
 
+    game.settings.register("VoiceActor", "darkButtons", {
+        name: "VOICEACTOR.settings.dark-buttons.name",
+        hint: "VOICEACTOR.settings.dark-buttons.hint",
+        scope: "world",
+        config: true,
+        default: false,
+        type: Boolean
+    });
+
     if (game.user.isGM) {
         // Will be used when custom dirs are supported
         var customDirectory = ''
@@ -106,16 +115,16 @@ var onRender = async (app, html, data) => {
     }
 
     let buttons = ``;
-    game.settings.get("VoiceActor", "playersRecordOwned");
+    let darkButtons = game.settings.get("VoiceActor", "darkButtons")
     if (game.user.isGM || (data.owner && game.settings.get("VoiceActor", "playersRecordOwned") && game.user.hasPermission("FILES_UPLOAD"))) {
         buttons += `<button id="voiceactor-record" class="voiceactor-button" title="${game.i18n.localize("VOICEACTOR.ui.button-tooltip-record")}">
-        <i id="voiceactor-record-icon" style="color: white" class="fas fa-microphone"></i>
+        <i id="voiceactor-record-icon" style="color: ${darkButtons?'black':'white'}" class="fas fa-microphone"></i>
         </button>`;
     }
 
     if (game.user.isGM || data.owner || game.settings.get("VoiceActor", "playersPlaybackLimited")) {
         buttons += `<button id="voiceactor-playback" class="voiceactor-button" title="${game.i18n.localize("VOICEACTOR.ui.button-tooltip-playback")}">
-        <i id="voiceactor-playback-icon" style="color: white" class="fas fa-play"></i>
+        <i id="voiceactor-playback-icon" style="color: ${darkButtons?'black':'white'}" class="fas fa-play"></i>
         </button>`
     }
 
@@ -126,7 +135,7 @@ var onRender = async (app, html, data) => {
 
     if (clip) {
         // Change button color if this actor has a clip already
-        title.find("#voiceactor-record #voiceactor-record-icon").css('color', 'lightgreen');
+        title.find("#voiceactor-record #voiceactor-record-icon").css('color', darkButtons?'darkGreen':'lightgreen');
     }
 
     title.find("#voiceactor-record").click(async (ev) => {
@@ -193,8 +202,11 @@ var onRender = async (app, html, data) => {
                     // Only really works with Firefox, chrome has some weird caching, requiring the user to wait about 30 seconds
                     game.audio.buffers.delete(`${dirName[0]=='/'?dirName.substr(1):dirName}/${fileName}`);
 
+                    
+                    let darkButtons = game.settings.get("VoiceActor", "darkButtons")
+
                     title.find("#voiceactor-record #voiceactor-record-icon").removeClass('fa-stop').addClass('fa-microphone');
-                    title.find("#voiceactor-record #voiceactor-record-icon").css('color', 'lightgreen');
+                    title.find("#voiceactor-record #voiceactor-record-icon").css('color', darkButtons?'darkGreen':'lightgreen');
                     delete vaRecorder;
                     clearTimeout(vaRecorderTimeout);
                     delete vaRecorderTimeout;
