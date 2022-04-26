@@ -2,7 +2,7 @@
   "name": "VoiceActor",
   "title": "VoiceActor by Blitz",
   "description": "'Wait, what did they sound like again?'. Save a voice clip to an actor to playback, and remind yourself what dumb voice you used.",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "author": "Blitzkraig",
   "scripts": ["./voiceactor.js"],
   "styles": ["./css/va.css"],
@@ -14,8 +14,8 @@
       "path": "lang/en.json"
     }
   ],
-  "minimumCoreVersion": "0.7.0",
-  "compatibleCoreVersion": "0.8.8",
+  "minimumCoreVersion": "0.8.8",
+  "compatibleCoreVersion": "9",
   "url": "https://github.com/BlitzKraig/fvtt-VoiceActor",
   "manifest": "https://raw.githubusercontent.com/BlitzKraig/fvtt-VoiceActor/master/module.json",
   "download": "https://github.com/BlitzKraig/fvtt-VoiceActor/releases/download/latest/voiceactor-release.zip"
