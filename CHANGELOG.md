@@ -1,3 +1,11 @@
+# 0.2.0 - 2022/04/26
+
+* Updated for full compatibility with v9
+* Added module setting for dark buttons for increased system compatibility
+* Fixed overwriting issue - Module now records a fresh clip with a suffix counter. Be warned, if you overwrite the same clip a bunch of times, all of those clips will exist in your VA directory. You can safely delete the extras manually, the newest clip has the highest suffix number.
+* Fixed caching issues, a side effect of the change above. Overwritten clips will now be available for playback instantly.
+* Added support for Forbidden Lands (possibly some other modules too, if they do not use an `actor` property and instead make the `_id` directly available under `data`)
+
 # 0.1.2 - 2021/08/09
 
 * Fixed broken audio files, republished
