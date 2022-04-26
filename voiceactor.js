@@ -206,7 +206,7 @@ var onRender = async (app, html, data) => {
             vaRecorderTimeout = setTimeout(() => {
                 vaRecorder.stop();
             }, 30000);
-        }).catch((e)=>{
+        }).catch((e) => {
             console.log(e);
         });
     });
@@ -227,7 +227,7 @@ var onRender = async (app, html, data) => {
             var onFinish = (id) => {
                 // Prevent caching, in case the user overwrites the clip
                 if (vaPlaybackFile) {
-                    if(hasHowler){
+                    if (hasHowler) {
                         vaPlaybackFile.unload();
                     }
                     vaPlaybackFile = undefined;
@@ -242,7 +242,7 @@ var onRender = async (app, html, data) => {
                 onend: onFinish,
                 onstop: onFinish
             }
-            if(hasHowler){
+            if (hasHowler) {
                 vaPlaybackFile = new Howl(payload);
                 vaPlaybackFile.play();
             } else {
@@ -250,7 +250,9 @@ var onRender = async (app, html, data) => {
                 vaPlaybackFile.on('end', onFinish);
                 vaPlaybackFile.on('stop', onFinish)
                 await vaPlaybackFile.load();
-                vaPlaybackFile.play({volume: payload.volume});
+                vaPlaybackFile.play({
+                    volume: payload.volume
+                });
             }
             vaStates.playing = true;
             title.find("#voiceactor-playback #voiceactor-playback-icon").removeClass('fa-play').addClass('fa-stop');
