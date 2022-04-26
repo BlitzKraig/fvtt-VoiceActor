@@ -92,7 +92,7 @@ var onRender = async (app, html, data) => {
     var customDirectory = ''
 
     // Get window-title from html so we can prepend our buttons
-    let title = html.find('.window-title');
+    let title = html.find('.window-header');
 
     // Store recording and playback states
     var vaStates = {
