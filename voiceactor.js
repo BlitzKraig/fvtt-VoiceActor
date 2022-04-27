@@ -180,6 +180,7 @@ var onRender = async (app, html, data) => {
                 }
             }
         } else {
+            fileName = fileName.split('/').pop() // Forge/remote fix. Will probably break if someone puts a slash in their unlinked token.
             let suffix = fileName.split('~').pop().split('.')
             suffix[0]++
             if(isNaN(suffix[0])){
