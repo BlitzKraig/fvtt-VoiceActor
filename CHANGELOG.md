@@ -1,3 +1,7 @@
+# 0.2.1 - 2022/04/27
+
+* Fixed a clip overwriting issue on Forge
+
 # 0.2.0 - 2022/04/26
 
 * Updated for full compatibility with v9
